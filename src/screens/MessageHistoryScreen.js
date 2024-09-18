@@ -5,6 +5,7 @@ import { View, Text, StyleSheet } from 'react-native';
 const MessageHistoryScreen = ({navigation}) => {
   return (
     <View style={styles.container}>
+
       <Text>Message History Screen</Text>
     </View>
   )
