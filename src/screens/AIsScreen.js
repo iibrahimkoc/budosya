@@ -73,7 +73,6 @@ const AIsScreen = ({navigation}) => {
             </View>
           </View>
         </TouchableOpacity>
-
         <View style={styles.box1}></View>
         <View style={styles.box1}></View>
         <View style={styles.box1}></View>
