@@ -6,15 +6,39 @@ const SignupScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSignup = () => {
+  const handleSignup = async () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       Alert.alert('Geçersiz Email', 'Lütfen geçerli bir mail adresi giriniz.');
+      return;
     }
-    else{
-      navigation.navigate('AIsScreen');
+
+    // FormData nesnesi oluşturuluyor
+    const formData = new FormData();
+    formData.append('name', username);
+    formData.append('email', email);
+    formData.append('password', password);
+    formData.append('terms_rules', 'checked');  // Şartlar ve Koşullar alanı eklendi
+
+    try {
+      const response = await fetch('https://aigency.dev/api/v1/register', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        Alert.alert('Başarılı', 'Kayıt işlemi başarılı!');
+        navigation.navigate('AIsScreen');
+      } else {
+        Alert.alert('Hata', data.message || 'Kayıt işlemi başarısız oldu.');
+      }
+    } catch (error) {
+      Alert.alert('Hata', 'Bir hata oluştu. Lütfen tekrar deneyin.');
     }
   };
+
 
   return (
     <View style={styles.container}>

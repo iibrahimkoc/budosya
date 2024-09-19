@@ -53,18 +53,6 @@ const ProfileScreen = ({ navigation }) => {
             ></Switch>
           </TouchableOpacity>
         </View>
-
-        <View style={styles.settingBox}>
-          <TouchableOpacity onPress={() => navigation.navigate('LanguageSetting')} style={styles.settingBoxButton}>
-            <Text style={styles.settingBoxText}>Dil Seçin</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.settingBox}>
-          <TouchableOpacity onPress={() => navigation.navigate('LanguageSetting')} style={styles.settingBoxButton}>
-            <Text style={styles.settingBoxText}>Dil Seçin</Text>
-          </TouchableOpacity>
-        </View>
-
       </View>
 
       <Modal

@@ -7,10 +7,14 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ScrollView,
-  TextInput,
+  TextInput, Modal, TouchableNativeFeedback,
 } from 'react-native';
 
 const AIsScreen = ({navigation}) => {
+
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const [selectedAI, setSelectedAI] = React.useState('');
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -28,7 +32,12 @@ const AIsScreen = ({navigation}) => {
         <TextInput placeholder={'AI ara'} style={styles.input}></TextInput>
       </View>
       <ScrollView showsVerticalScrollIndicator={false} style={styles.aiBox}>
-        <TouchableOpacity style={styles.box1}>
+        <TouchableOpacity style={styles.box1}
+                          onPress={() => {
+                            setModalVisible(true)
+                            setSelectedAI('ALPARSLAN')
+                          }}
+        >
           <View style={styles.photo}>
             <Image resizeMethod={'auto'} source={require('../assets/images/lawyer.png')} style={styles.photoImage}></Image>
           </View>
@@ -43,7 +52,12 @@ const AIsScreen = ({navigation}) => {
             </View>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.box1}>
+        <TouchableOpacity style={styles.box1}
+                          onPress={() =>{
+                            setModalVisible(true)
+                            setSelectedAI('ECRİN')
+                          }}
+        >
           <View style={styles.photo}>
             <Image resizeMethod={'resize'} source={require('../assets/images/diyetisyen.png')} style={styles.photoImage}></Image>
           </View>
@@ -58,7 +72,12 @@ const AIsScreen = ({navigation}) => {
             </View>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.box1}>
+        <TouchableOpacity style={styles.box1}
+                          onPress={() => {
+                            setModalVisible(true)
+                            setSelectedAI('NEVZAT')
+                          }}
+        >
           <View style={styles.photo}>
             <Image resizeMethod={'auto'} source={require('../assets/images/chef.png')} style={styles.photoImage}></Image>
           </View>
@@ -80,6 +99,36 @@ const AIsScreen = ({navigation}) => {
         <View style={styles.box1}></View>
       </ScrollView>
       <View style={styles.bottomBar}>{/*ALT BAR EKLENECEK*/}</View>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+          <TouchableNativeFeedback onPress={() => setModalVisible(false)}>
+            <View style={styles.modalOverlay}>
+              <TouchableNativeFeedback>
+                <View style={styles.modalBox}>
+                  <View style={styles.modalChatBox}>
+                    <TouchableOpacity style={styles.newChatBox}>
+                      <Text>Yeni sohbet oluştur</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.lastChatbox}>
+                      <Text>Önceki sohbetleri görüntüle</Text>
+                    </TouchableOpacity>
+                  </View>
+                  <View style={styles.modalCloseBox}>
+                    <TouchableOpacity style={styles.closeModal}>
+                      <Text>iptal et</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </TouchableNativeFeedback>
+            </View>
+          </TouchableNativeFeedback>
+      </Modal>
+
     </SafeAreaView>
   )
 }
@@ -129,11 +178,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingLeft: 10,
   },
-
   aiBox: {
     width: '100%',
-
-
   },
   box1: {
     marginHorizontal: '5%',
@@ -184,7 +230,62 @@ const styles = StyleSheet.create({
   },
   aiInfoText: {
     textAlign: 'justify',
+  },
+  modalOverlay:{
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0,0,0,0.2)',
+  },
+  modalBox:{
+    width: '100%',
+    height: 'auto',
+    padding: '3%',
 
+  },
+  modalChatBox:{
+    width: '100%',
+    height: 'auto',
+    backgroundColor: 'white',
+    borderRadius: 10,
+  },
+  newChatBox:{
+    width: '100%',
+    height: 50,
+    backgroundColor: 'white',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+  },
+  lastChatbox: {
+    width: '100%',
+    height: 50,
+    backgroundColor: 'white',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderTopWidth: 1,
+    borderColor: "rgb(132,138,175)",
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+  },
+  modalCloseBox:{
+    width: '100%',
+    height: 'auto',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    marginVertical: 10,
+  },
+  closeModal:{
+    width: '100%',
+    height: 50,
+    borderRadius: 10,
+    backgroundColor: 'white',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   }
 })
 

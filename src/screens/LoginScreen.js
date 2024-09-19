@@ -5,17 +5,47 @@ const LoginScreen = ({ navigation, route }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { setIsLogined } = route.params;
-  const validateEmail = () => {
+
+  const validateEmail = async () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       Alert.alert('Geçersiz Email', 'Lütfen geçerli bir mail adresi giriniz.');
+      return;
     }
-    else{
-      setIsLogined(true);
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'TabNavigator', params: { screen: 'AIsScreen' } }],
+
+    const formData = new FormData();
+    formData.append('email', email);
+    formData.append('password', password);
+
+    try {
+      const response = await fetch('https://aigency.dev/api/v1/login/', {
+        method: 'POST',
+        headers: {},
+        body: formData,
       });
+
+      const data = await response.json();
+
+      // Başarılı yanıt kontrolü
+      if (response.ok && data.status) {
+        Alert.alert('Başarılı', data.message || 'Giriş işlemi başarılı!');
+        setIsLogined(true);
+        // `access_token`'ı burada kullanabilirsiniz, örneğin saklamak için
+        const token = data.access_token;
+
+        const userData = await fetch()
+
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'TabNavigator', params: { screen: 'AIsScreen' } }],
+        });
+      } else {
+        // Hata durumunda gelen mesajı göster
+        const errorMessage = data.message || 'Giriş işlemi başarısız oldu.';
+        Alert.alert('Hata', errorMessage);
+      }
+    } catch (error) {
+      Alert.alert('Hata', 'Bir hata oluştu. Lütfen tekrar deneyin.');
     }
   };
 
