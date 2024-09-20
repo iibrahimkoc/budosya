@@ -7,7 +7,7 @@ import {
   Image,
   ScrollView,
   SafeAreaView,
-  useWindowDimensions
+  useWindowDimensions, RefreshControl,
 } from 'react-native';
 
 import {MMKV} from 'react-native-mmkv';
@@ -39,6 +39,14 @@ const MessageHistoryScreen = ({navigation}) => {
     chats();
   }, [token]);
 
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      chats();
+      setRefreshing(false);
+    })
+  }, [token]);
 
   const isLargeScreen = width > 600;
 
@@ -64,6 +72,14 @@ const MessageHistoryScreen = ({navigation}) => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={styles.aiBox}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={"white"}
+            colors={"white"}
+          />
+        }
       >
         <View
           style={[styles.gridContainer, isLargeScreen && styles.gridContainerLarge]}
@@ -78,13 +94,13 @@ const MessageHistoryScreen = ({navigation}) => {
                                   navigation.navigate('ResumeMessageScreen');
                                 }}>
                 <View style={styles.photo}>
-                  <Image resizeMethod={'auto'} source={{uri: 'https://aigency.dev/public_uploads/66731bda984b7.jpg'}} style={styles.photoImage}></Image>
+                  <Image source={{uri: 'https://aigency.dev/public_uploads/66731bda984b7.jpg'}} style={styles.photoImage}></Image>
                 </View>
                 <View style={styles.stick}></View>
                 <View style={styles.aiTextBox}>
                   <View style={styles.aiInfoHeaderBox}>
                     <Text style={styles.aiInfoHeaderName}>{chat.ai_name.toUpperCase()}</Text>
-                    <Text style={styles.aiInfoHeaderDesc}>{chat.ai_desc}</Text>
+                    <Text numberOfLines={1} style={styles.aiInfoHeaderDesc}>{chat.ai_desc}</Text>
                   </View>
                   <View style={styles.aiInfoTextBox}>
                     <View style={styles.aiInfoTextBoxContainer}>
@@ -164,7 +180,7 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   box1: {
-    height: 150,
+    padding: 10,
     borderWidth: 2,
     borderColor: "rgb(34,42,63)",
     backgroundColor: "rgb(19,24,36)",
@@ -183,12 +199,15 @@ const styles = StyleSheet.create({
     width: '48%',
   },
   photo: {
-    height: '100%',
     width: '30%',
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   photoImage: {
-    height: '100%',
     width: '100%',
+    aspectRatio: 1,
     borderRadius: 200,
   },
   stick: {

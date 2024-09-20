@@ -22,11 +22,33 @@ const BlogInfoScreen = ({ navigation }) => {
       setBlogInfo(blogInfoData);
       console.log(11122)
       console.log(blogInfoData);
+      const replaceText = blogInfoData.blog_content
+          .replaceAll("&ccedil;","ç")
+          .replaceAll("&Ccedil;","Ç")
+          .replaceAll("&uuml;","ü")
+          .replaceAll("&Uuml;","Ü")
+          .replaceAll("&ouml;","ö")
+          .replaceAll("&Ouml; ","Ö")
+          .replaceAll("&acirc; ","â")
+          .replaceAll("&rsquo;","'")
+          .replaceAll("<p>","")
+          .replaceAll("</p>","")
+          .replaceAll("<strong>","")
+          .replaceAll("</strong>","")
+          .replaceAll("<ol>","")
+          .replaceAll("</ol>","")
+          .replaceAll("<li>","")
+          .replaceAll("</li>","")
+          .replaceAll("<ul>","")
+          .replaceAll("</ul>","");
+      setReplaceTextData(replaceText)
+
     }
     catch (error) {
       console.log(error);
     }
   }
+
 
 
   useEffect(() => {

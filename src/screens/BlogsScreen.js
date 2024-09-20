@@ -3,6 +3,7 @@ import {View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Image, ScrollVie
 import LinearGradient from 'react-native-linear-gradient';
 import {MMKV} from 'react-native-mmkv';
 
+
 const storage = new MMKV();
 
 const BlogsScreen = ({ navigation }) => {
@@ -43,10 +44,10 @@ const BlogsScreen = ({ navigation }) => {
       <ScrollView>
         <View style={styles.blogList}>
           {blogList.length > 0 ?
-            (blogList.map((blog) => {
+            (blogList.map((blog,index) => {
               return (
                 <TouchableOpacity
-                  key={blog.id}
+                  key={index}
                   style={styles.blogListBox}
                   onPress={() => {
                     storage.set("blog_id", blog.blog_id);
