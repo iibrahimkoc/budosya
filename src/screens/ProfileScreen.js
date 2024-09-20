@@ -29,8 +29,8 @@ const ProfileScreen = ({ navigation }) => {
         </View>
         <View style={styles.profileInfoBox}>
           <View style={styles.profilePhotoBox} />
-          <Text style={styles.profileUsername}>İbrahim Koç</Text>
-          <Text style={styles.profileEmail}>sewebko@gmail.com</Text>
+          <Text style={styles.profileUsername}>iibrahimkoc</Text>
+          <Text style={styles.profileEmail}>sewebko@icloud.com</Text>
         </View>
       </View>
       <View style={styles.settings}>

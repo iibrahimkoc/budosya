@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
-import {Text, SafeAreaView, StyleSheet, View, TextInput, Alert, Button, Image} from 'react-native';
+import {Text, StyleSheet, View, TextInput, Alert, Button, Image} from 'react-native';
+
 
 const LoginScreen = ({ navigation, route }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { setIsLogined } = route.params;
+
+
 
   const validateEmail = async () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -26,23 +29,18 @@ const LoginScreen = ({ navigation, route }) => {
 
       const data = await response.json();
 
-      // Başarılı yanıt kontrolü
       if (response.ok && data.status) {
-        Alert.alert('Başarılı', data.message || 'Giriş işlemi başarılı!');
         setIsLogined(true);
-        // `access_token`'ı burada kullanabilirsiniz, örneğin saklamak için
         const token = data.access_token;
-
-        const userData = await fetch()
-
         navigation.reset({
           index: 0,
-          routes: [{ name: 'TabNavigator', params: { screen: 'AIsScreen' } }],
+          routes: [{ name: 'TabNavigator',  params: { screen: 'AIsScreen', params: {token: token} } }],
+
         });
       } else {
         // Hata durumunda gelen mesajı göster
-        const errorMessage = data.message || 'Giriş işlemi başarısız oldu.';
-        Alert.alert('Hata', errorMessage);
+        const errorMessage = data.message || 'Kullanıcı bulunamadı'
+        Alert.alert( errorMessage, 'Hatalı e-posta veya şifre girildi.');
       }
     } catch (error) {
       Alert.alert('Hata', 'Bir hata oluştu. Lütfen tekrar deneyin.');

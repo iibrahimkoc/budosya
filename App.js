@@ -11,6 +11,7 @@ import AIsScreen from './src/screens/AIsScreen';
 import NotificationScreen from './src/screens/NotificationScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import MessageHistoryScreen from './src/screens/MessageHistoryScreen';
+import TalkScreen from './src/screens/TalkScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -44,6 +45,7 @@ const App = () => {
         {/*gestureEnabled ile geri gitmeyi engelledik*/}
         <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
         <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+        <Stack.Screen name="TalkScreen" component={TalkScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

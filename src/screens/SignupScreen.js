@@ -28,6 +28,7 @@ const SignupScreen = ({ navigation }) => {
 
       const data = await response.json();
 
+
       if (response.ok) {
         Alert.alert('Başarılı', 'Kayıt işlemi başarılı!');
         navigation.navigate('AIsScreen');

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,10 +10,29 @@ import {
   TextInput, Modal, TouchableNativeFeedback,
 } from 'react-native';
 
-const AIsScreen = ({navigation}) => {
+const AIsScreen = ({navigation, route}) => {
+  const { token } = route.params;
 
+  useEffect(() => {
+    const aiTeam = async () => {
+      const myToken = route.params.token;
+      try{
+        const response = await fetch("https://aigency.dev/api/v1/ai-team-list/?access_token=" + myToken,{
+          method: 'GET',
+        })
+
+        const data = await response.json();
+      }
+      catch(error) {
+        console.log( "hata mesajı ",error);
+      }
+    };
+    aiTeam();
+  }, [token.token]);
   const [modalVisible, setModalVisible] = React.useState(false);
   const [selectedAI, setSelectedAI] = React.useState('');
+
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -44,11 +63,71 @@ const AIsScreen = ({navigation}) => {
           <View style={styles.stick}></View>
           <View style={styles.aiTextBox}>
             <View style={styles.aiInfoHeaderBox}>
-              <Text style={styles.aiInfoHeader}>ALPARSLAN</Text>
+              <Text style={styles.aiInfoHeader}>TURAL</Text>
               <Text style={styles.aiInfoHeader}>-AVUKAT-</Text>
             </View>
             <View style={styles.aiInfoTextBox}>
-              <Text style={styles.aiInfoText}>Hukuk işleri ile aklına takılan her noktada Alparslan yanında</Text>
+              <Text style={styles.aiInfoText}>Hukuk işleri ile aklına takılan her noktada Tural yanında</Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.box1}
+                          onPress={() =>{
+                            setModalVisible(true)
+                            setSelectedAI('ECRİN')
+                          }}
+        >
+          <View style={styles.photo}>
+            <Image resizeMethod={'resize'} source={require('../assets/images/diyetisyen.png')} style={styles.photoImage}></Image>
+          </View>
+          <View style={styles.stick}></View>
+          <View style={styles.aiTextBox}>
+            <View style={styles.aiInfoHeaderBox}>
+              <Text style={styles.aiInfoHeader}>DOĞA</Text>
+              <Text style={styles.aiInfoHeader}>-DİYETİSYEN-</Text>
+            </View>
+            <View style={styles.aiInfoTextBox}>
+              <Text style={styles.aiInfoText}>Diyet işleri ile aklına takılan her noktada Doğa yanında</Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.box1}
+                          onPress={() => {
+                            setModalVisible(true)
+                            setSelectedAI('NEVZAT')
+                          }}
+        >
+          <View style={styles.photo}>
+            <Image resizeMethod={'auto'} source={require('../assets/images/chef.png')} style={styles.photoImage}></Image>
+          </View>
+          <View style={styles.stick}></View>
+          <View style={styles.aiTextBox}>
+            <View style={styles.aiInfoHeaderBox}>
+              <Text style={styles.aiInfoHeader}>DARK WEB</Text>
+              <Text style={styles.aiInfoHeader}>-DARK WEB-</Text>
+            </View>
+            <View style={styles.aiInfoTextBox}>
+              <Text style={styles.aiInfoText}>Dark Web konusunda aklına takılan her noktada Dark Web yanında</Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.box1}
+                          onPress={() => {
+                            setModalVisible(true)
+                            setSelectedAI('ALPARSLAN')
+                          }}
+        >
+          <View style={styles.photo}>
+            <Image resizeMethod={'resize'} source={require('../assets/images/diyetisyen.png')} style={styles.photoImage}></Image>
+          </View>
+          <View style={styles.stick}></View>
+          <View style={styles.aiTextBox}>
+            <View style={styles.aiInfoHeaderBox}>
+              <Text style={styles.aiInfoHeader}>RONA</Text>
+              <Text style={styles.aiInfoHeader}>-PSİKOLOG-</Text>
+            </View>
+            <View style={styles.aiInfoTextBox}>
+              <Text style={styles.aiInfoText}>Psikolog işleri ile aklına takılan her noktada Rona yanında</Text>
             </View>
           </View>
         </TouchableOpacity>
@@ -92,11 +171,6 @@ const AIsScreen = ({navigation}) => {
             </View>
           </View>
         </TouchableOpacity>
-        <View style={styles.box1}></View>
-        <View style={styles.box1}></View>
-        <View style={styles.box1}></View>
-        <View style={styles.box1}></View>
-        <View style={styles.box1}></View>
       </ScrollView>
       <View style={styles.bottomBar}>{/*ALT BAR EKLENECEK*/}</View>
 
@@ -111,7 +185,11 @@ const AIsScreen = ({navigation}) => {
               <TouchableNativeFeedback>
                 <View style={styles.modalBox}>
                   <View style={styles.modalChatBox}>
-                    <TouchableOpacity style={styles.newChatBox}>
+                    <TouchableOpacity style={styles.newChatBox}
+                                      onPress={() => {
+                                        navigation.navigate('TalkScreen', {selectedAI: selectedAI});
+                                        setModalVisible(false);
+                                      }}>
                       <Text>Yeni sohbet oluştur</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.lastChatbox}>
@@ -119,7 +197,7 @@ const AIsScreen = ({navigation}) => {
                     </TouchableOpacity>
                   </View>
                   <View style={styles.modalCloseBox}>
-                    <TouchableOpacity style={styles.closeModal}>
+                    <TouchableOpacity style={styles.closeModal} onPress={() => setModalVisible(false)}>
                       <Text>iptal et</Text>
                     </TouchableOpacity>
                   </View>

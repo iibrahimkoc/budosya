@@ -1,8 +1,30 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Image, TextInput, ScrollView, SafeAreaView} from 'react-native';
 
 
 const MessageHistoryScreen = ({navigation}) => {
+
+  const [myChats, setMyChats] = useState([]);
+
+  useEffect(() => {
+    const chats = async () => {
+      try{
+        const myToken = "EwGB1cVREKAaRDmD";
+        const response = await fetch("https://aigency.dev/api/v1/my-chats?access_token=" + myToken,{
+          method: 'GET',
+        });
+        const data = await response.json();
+        setMyChats(data);
+      }
+      catch (error) {
+        console.log(error);
+      }
+    }
+    chats();
+  }, []);
+
+
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -20,21 +42,27 @@ const MessageHistoryScreen = ({navigation}) => {
         <TextInput placeholder={'AI ara'} style={styles.input}></TextInput>
       </View>
       <ScrollView showsVerticalScrollIndicator={false} style={styles.aiBox}>
-        <TouchableOpacity style={styles.box1}>
-          <View style={styles.photo}>
-            <Image resizeMethod={'auto'} source={require('../assets/images/lawyer.png')} style={styles.photoImage}></Image>
-          </View>
-          <View style={styles.stick}></View>
-          <View style={styles.aiTextBox}>
-            <View style={styles.aiInfoHeaderBox}>
-              <Text style={styles.aiInfoHeader}>ALPARSLAN</Text>
-              <Text style={styles.aiInfoHeader}>-AVUKAT-</Text>
-            </View>
-            <View style={styles.aiInfoTextBox}>
-              <Text style={styles.aiInfoText}>Hukuk işleri ile aklına takılan her noktada Alparslan yanında</Text>
-            </View>
-          </View>
-        </TouchableOpacity>
+        {myChats.length > 0 ?(
+          myChats.map((chat, index) => (
+            <TouchableOpacity style={styles.box1} onPress={() => navigation.navigate('TalkScreen')}>
+              <View style={styles.photo}>
+                <Image resizeMethod={'auto'} source={require('../assets/images/lawyer.png')} style={styles.photoImage}></Image>
+              </View>
+              <View style={styles.stick}></View>
+              <View style={styles.aiTextBox}>
+                <View style={styles.aiInfoHeaderBox}>
+                  <Text style={styles.aiInfoHeaderName}>{chat.ai_name.toUpperCase()}</Text>
+                  <Text style={styles.aiInfoHeaderDesc}>{chat.ai_desc.toUpperCase()}</Text>
+                </View>
+                <View style={styles.aiInfoTextBox}>
+                  <Text style={styles.aiInfoText}>{chat.ai_desc} işleri ile aklına takılan her noktada {chat.ai_name} yanında</Text>
+                </View>
+              </View>
+            </TouchableOpacity>
+          ))
+        ) : (
+          <Text style={{ textAlign: 'center', marginTop: 20 }}> Yükleniyor...</Text> // Veri yüklenirken gösterilecek mesaj
+        )}
       </ScrollView>
     </SafeAreaView>
   )
@@ -122,15 +150,22 @@ const styles = StyleSheet.create({
   },
   aiTextBox: {
     width: '60%',
-
   },
   aiInfoHeaderBox: {
     width: '100%',
-    height: 20,
+    height: "auto",
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  aiInfoHeader:{
+  aiInfoHeaderName: {
+    width: '50%',
+    fontWeight: 'bold',
+  },
+  aiInfoHeaderDesc:{
+    width: '50%',
+    textAlign: 'center',
     fontWeight: 'bold',
   },
   aiInfoTextBox: {
