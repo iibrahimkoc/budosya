@@ -1,4 +1,5 @@
-import React , { useState } from 'react';
+import React, {useState} from 'react';
+import {View, Image} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -12,42 +13,112 @@ import NotificationScreen from './src/screens/NotificationScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import MessageHistoryScreen from './src/screens/MessageHistoryScreen';
 import TalkScreen from './src/screens/TalkScreen';
+import NewTalkScreen from './src/screens/newTalkScreen';
+import ResumeTalkScreen from './src/screens/ResumeTalkScreen';
+import ResumeMessageScreen from './src/screens/ResumeMessageScreen';
+import Purchases from './src/screens/Purchases';
+import ShareAndWin from './src/screens/ShareAndWin';
+import CreditProcess from './src/screens/CreditProcess';
+import BlogsScreen from './src/screens/BlogsScreen';
+import BlogInfoScreen from './src/screens/BlogInfoScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 const TabNavigator = () => {
   return (
-    <Tab.Navigator screenOptions={{ headerShown: false }}>
-      <Tab.Screen name={'messageHistoryScreen'} component={MessageHistoryScreen} />
-      <Tab.Screen name={'AIsScreen'} component={AIsScreen} />
-      <Tab.Screen name={'ProfileScreen'} component={ProfileScreen} />
+    <Tab.Navigator
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: 'rgb(110,135,201)',
+        tabBarStyle: {
+          backgroundColor: "rgb(12,15,22)",
+          borderTopWidth: 2,
+          borderTopColor:  "rgb(19,24,36)",
+        }
+      }} >
+      <Tab.Screen
+        name={'SOHBETLERİM'}
+        component={MessageHistoryScreen}
+        options={{
+          tabBarIcon: ({ focused }) => {
+            return (
+              <View>
+                <Image
+                  source={require("./src/assets/images/chat.png")}
+                  resizeMode="contain"
+                  style={{ width: 25, height: 25 }}
+                />
+              </View>
+            );
+          },
+        }}/>
+      <Tab.Screen
+        name={'AI EKİBİMİZ'}
+        component={AIsScreen}
+        options={{
+          tabBarIcon: ({ focused }) => {
+            return (
+              <View>
+                <Image
+                  source={require("./src/assets/images/aiImage.png")}
+                  resizeMode="contain"
+                  style={{ width: 25, height: 25 }}
+                />
+              </View>
+            );
+          },
+        }}/>
+      <Tab.Screen
+        name={'PROFİL'}
+        component={ProfileScreen}
+        options={{
+          tabBarIcon: ({ focused }) => {
+            return (
+              <View>
+                <Image
+                  source={require("./src/assets/images/profile.png")}
+                  resizeMode="contain"
+                  style={{ width: 25, height: 25 }}
+                />
+              </View>
+            );
+          },
+        }}/>
     </Tab.Navigator>
   )
 }
 
 const App = () => {
-  const [isLogined, setIsLogined] = useState(false);
-  console.log("12312312311312323312 ", isLogined);
+  const [isLogined, setIsLogined] = useState( false);
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName={isLogined ? 'TabNavigator' : 'LoginStartedScreen'} screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="TabNavigator" component={TabNavigator} />
-        <Stack.Screen name="LoginStartedScreen" component={LoginStartedScreen} />
-        <Stack.Screen
-          name="LoginScreen"
-          component={LoginScreen}
-          initialParams={{ setIsLogined: setIsLogined }}
-        />
-        <Stack.Screen name="ForgotPasswordScreen" component={ForgotPasswordScreen} />
-        <Stack.Screen name="SignupScreen" component={SignupScreen} />
-        <Stack.Screen name="AIsScreen" component={AIsScreen} options={{ gestureEnabled: false }} />
-        {/*gestureEnabled ile geri gitmeyi engelledik*/}
-        <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
-        <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
-        <Stack.Screen name="TalkScreen" component={TalkScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName={isLogined ? 'TabNavigator' : 'LoginStartedScreen'} screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="TabNavigator" component={TabNavigator} />
+          <Stack.Screen name="LoginStartedScreen" component={LoginStartedScreen} />
+          <Stack.Screen
+            name="LoginScreen"
+            options={{ gestureEnabled: false}}
+            component={LoginScreen}
+            initialParams={{ setIsLogined: setIsLogined }}
+          />
+          <Stack.Screen name="ForgotPasswordScreen" component={ForgotPasswordScreen} />
+          <Stack.Screen name="SignupScreen" component={SignupScreen} />
+          <Stack.Screen name="AIsScreen" component={AIsScreen} options={{ gestureEnabled: false }} />
+          {/*gestureEnabled ile geri gitmeyi engelledik*/}
+          <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
+          <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+          <Stack.Screen name="TalkScreen" component={TalkScreen} />
+          <Stack.Screen name="NewTalkScreen" component={NewTalkScreen} />
+          <Stack.Screen name="ResumeTalkScreen" component={ResumeTalkScreen} />
+          <Stack.Screen name="ResumeMessageScreen" component={ResumeMessageScreen} />
+          <Stack.Screen name="Purchases" component={Purchases} />
+          <Stack.Screen name="ShareAndWin" component={ShareAndWin} />
+          <Stack.Screen name="CreditProcess" component={CreditProcess} />
+          <Stack.Screen name="BlogsScreen" component={BlogsScreen} />
+          <Stack.Screen name="BlogInfoScreen" component={BlogInfoScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
   );
 };
 

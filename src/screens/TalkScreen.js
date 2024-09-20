@@ -8,18 +8,46 @@ import {
   ScrollView,
   TextInput,
 } from 'react-native';
+import { MMKV } from 'react-native-mmkv';
 
-const TalkScreen = ({ navigation , route}) => {
-  const { selectedAI} = route.params;
+const storage = new MMKV();
 
+const TalkScreen = ({ navigation }) => {
+  const selectedAI = storage.getString("selectedAI");
+  const myToken = storage.getString("token");
+  const selectedAiId = storage.getString("selectedAiId");
 
   const [responseData, setResponseData] = useState('');
   const [resumeResponseData, setResumeResponseData] = useState('');
-
+  const [token, setToken] = useState(myToken);
   const [yes, setYes] = useState('');
-  const [token, setToken] = useState('EwGB1cVREKAaRDmD');
   const [chat_id, setChatId] = useState('thread_66d57e4c6397c1.83564007');
   const [myMessage, setMyMessage] = useState('');
+  const [newTalkDataJson, setNewTalkDataJson] = useState('');
+
+  useEffect(() => {
+      const newTalk = async () => {
+        const newTalkFormData= new FormData();
+        newTalkFormData.append("acces_token", token);
+        newTalkFormData.append('ai_id', selectedAiId);
+
+        try {
+          const newTalkResponse = await fetch("https://aigency.dev/api/v1/newChat", {
+            method: 'POST',
+            body: newTalkFormData,
+          })
+
+          const newTalkData = newTalkResponse.json();
+          setNewTalkDataJson(newTalkData);
+          console.log(newTalkData);
+          console.log(newTalkDataJson);
+        }
+        catch(error) {
+          console.log(error);
+        }
+      }
+    }, []
+  )
 
   const sendMessage = async () => {
     setYes(myMessage);

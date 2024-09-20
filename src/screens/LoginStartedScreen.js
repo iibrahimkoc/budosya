@@ -1,8 +1,30 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {View, Text, StyleSheet, TouchableHighlight, TouchableOpacity, Image, SafeAreaView} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import { MMKV } from 'react-native-mmkv';
+
+const storage = new MMKV();
 
 const LoginStartedScreen = ({navigation}) => {
+  useEffect(() => {
+    const checkUserLoginStatus = () => {
+      const savedEmail = storage.getString('user_email');
+      console.log("email: ",savedEmail);
+
+      const savedPassword = storage.getString('user_password');
+      console.log("şifre",savedPassword);
+
+      if (savedEmail !== undefined && savedPassword !== undefined) {
+        // Kullanıcı bilgileri mevcutsa otomatik giriş yap
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'TabNavigator', params: { screen: 'AIsScreen' } }],
+        });
+      }
+    }
+    checkUserLoginStatus();
+  }, [navigation]);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.containerBox1}>
@@ -15,14 +37,14 @@ const LoginStartedScreen = ({navigation}) => {
         <Text style={styles.title}>Yazılımdan sağlığa kadar her cevap Smart Chat'te</Text>
         <TouchableHighlight style={styles.loginButton}
                             onPress={() => navigation.navigate("LoginScreen")}
-        ><LinearGradient colors={['rgb(44,56,80)', 'rgb(61,81,147)']}
+        ><LinearGradient colors={['rgb(184,86,196)', 'rgb(121,119,243)']}
                          start={{ x: 0.0, y: 1.0 }} end={{ x: 1.0, y: 1.0 }}
                          style={styles.buttonGradient}>
           <Text style={styles.text}>LOGIN</Text>
         </LinearGradient>
         </TouchableHighlight>
-        <LinearGradient colors={['rgb(44,56,80)', 'rgb(61,81,147)']}
-                        start={{ x: 0.0, y: 1.0 }} end={{ x: 1.0, y: 1.0 }}
+        <LinearGradient colors={['rgb(184,86,196)', 'rgb(121,119,243)']}
+                        start={{ x: 0.25, y: 0.25 }} end={{ x: 1.0, y: 1.0 }}
                         style={styles.signupButton}>
           <TouchableOpacity style={styles.signupButtonBox}
                             onPress={() => navigation.navigate("SignupScreen")}
@@ -34,14 +56,14 @@ const LoginStartedScreen = ({navigation}) => {
 
     </SafeAreaView>
   )
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: "rgb(91, 107, 207)",
+    backgroundColor: "rgb(12,15,22)",
   },
   containerBox1: {
     width: '100%',
@@ -100,7 +122,7 @@ const styles = StyleSheet.create({
   signupButtonBox:{
     width: '98%',
     height: '85%',
-    backgroundColor: "rgb(91, 107, 207)",
+    backgroundColor: "rgb(12,15,22)",
     borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',

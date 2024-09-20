@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -9,13 +9,38 @@ import {
   ScrollView,
   TextInput, Modal, TouchableNativeFeedback,
 } from 'react-native';
+import {UserInfo} from '../context/UserInfo';
+import { MMKV } from 'react-native-mmkv';
+import LinearGradient from 'react-native-linear-gradient';
 
-const AIsScreen = ({navigation, route}) => {
-  const { token } = route.params;
+const storage = new MMKV();
 
+const AIsScreen = ({ navigation }) => {
+  const token = storage.getString('token');
+  const [selectedAiId, setSelectedAiId] = useState(null);
+
+  const getThread = async () => {
+
+    const getThreadBody = new FormData();
+    getThreadBody.append("access_token", token);
+    getThreadBody.append("ai_id", selectedAiId);
+
+    try{
+      const getThreadResponse = await fetch("https://aigency.dev/api/v1/newChat", {
+        method: 'POST',
+        body: getThreadBody,
+      })
+
+      const getThreadData = await getThreadResponse.json();
+      storage.set("chat_id", getThreadData.chat_id);
+    }
+    catch(error){
+      console.log(error);
+    }
+  }
   useEffect(() => {
     const aiTeam = async () => {
-      const myToken = route.params.token;
+      const myToken = token;
       try{
         const response = await fetch("https://aigency.dev/api/v1/ai-team-list/?access_token=" + myToken,{
           method: 'GET',
@@ -28,7 +53,7 @@ const AIsScreen = ({navigation, route}) => {
       }
     };
     aiTeam();
-  }, [token.token]);
+  }, [token]);
   const [modalVisible, setModalVisible] = React.useState(false);
   const [selectedAI, setSelectedAI] = React.useState('');
 
@@ -37,142 +62,21 @@ const AIsScreen = ({navigation, route}) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.notificationButton} onPress={() => navigation.navigate('NotificationScreen')}>
-          <Image source={require('../assets/images/notification.png')} style={styles.notificationIcon}/>
-        </TouchableOpacity>
         <View>
           <Text style={styles.title}>AI EKİBİMİZ</Text>
         </View>
-        <TouchableOpacity style={styles.profileButton} onPress={() => navigation.navigate('ProfileScreen')}>
-          <Image source={require('../assets/images/profile.png')} style={styles.notificationIcon}/>
+        <TouchableOpacity onPress={() => navigation.navigate('BlogsScreen')}>
+          <Image source={require('../assets/images/blog.png')} style={styles.profileIcon}/>
         </TouchableOpacity>
       </View>
-      <View style={styles.inputBox}>
-        <TextInput placeholder={'AI ara'} style={styles.input}></TextInput>
-      </View>
+
+      <LinearGradient colors={['rgb(184,86,196)', 'rgb(121,119,243)']}
+                      start={{ x: 0.0, y: 1.0 }} end={{ x: 1.0, y: 1.0 }}
+                      style={{width: "100%", height: 2}} />
+
       <ScrollView showsVerticalScrollIndicator={false} style={styles.aiBox}>
-        <TouchableOpacity style={styles.box1}
-                          onPress={() => {
-                            setModalVisible(true)
-                            setSelectedAI('ALPARSLAN')
-                          }}
-        >
-          <View style={styles.photo}>
-            <Image resizeMethod={'auto'} source={require('../assets/images/lawyer.png')} style={styles.photoImage}></Image>
-          </View>
-          <View style={styles.stick}></View>
-          <View style={styles.aiTextBox}>
-            <View style={styles.aiInfoHeaderBox}>
-              <Text style={styles.aiInfoHeader}>TURAL</Text>
-              <Text style={styles.aiInfoHeader}>-AVUKAT-</Text>
-            </View>
-            <View style={styles.aiInfoTextBox}>
-              <Text style={styles.aiInfoText}>Hukuk işleri ile aklına takılan her noktada Tural yanında</Text>
-            </View>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.box1}
-                          onPress={() =>{
-                            setModalVisible(true)
-                            setSelectedAI('ECRİN')
-                          }}
-        >
-          <View style={styles.photo}>
-            <Image resizeMethod={'resize'} source={require('../assets/images/diyetisyen.png')} style={styles.photoImage}></Image>
-          </View>
-          <View style={styles.stick}></View>
-          <View style={styles.aiTextBox}>
-            <View style={styles.aiInfoHeaderBox}>
-              <Text style={styles.aiInfoHeader}>DOĞA</Text>
-              <Text style={styles.aiInfoHeader}>-DİYETİSYEN-</Text>
-            </View>
-            <View style={styles.aiInfoTextBox}>
-              <Text style={styles.aiInfoText}>Diyet işleri ile aklına takılan her noktada Doğa yanında</Text>
-            </View>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.box1}
-                          onPress={() => {
-                            setModalVisible(true)
-                            setSelectedAI('NEVZAT')
-                          }}
-        >
-          <View style={styles.photo}>
-            <Image resizeMethod={'auto'} source={require('../assets/images/chef.png')} style={styles.photoImage}></Image>
-          </View>
-          <View style={styles.stick}></View>
-          <View style={styles.aiTextBox}>
-            <View style={styles.aiInfoHeaderBox}>
-              <Text style={styles.aiInfoHeader}>DARK WEB</Text>
-              <Text style={styles.aiInfoHeader}>-DARK WEB-</Text>
-            </View>
-            <View style={styles.aiInfoTextBox}>
-              <Text style={styles.aiInfoText}>Dark Web konusunda aklına takılan her noktada Dark Web yanında</Text>
-            </View>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.box1}
-                          onPress={() => {
-                            setModalVisible(true)
-                            setSelectedAI('ALPARSLAN')
-                          }}
-        >
-          <View style={styles.photo}>
-            <Image resizeMethod={'resize'} source={require('../assets/images/diyetisyen.png')} style={styles.photoImage}></Image>
-          </View>
-          <View style={styles.stick}></View>
-          <View style={styles.aiTextBox}>
-            <View style={styles.aiInfoHeaderBox}>
-              <Text style={styles.aiInfoHeader}>RONA</Text>
-              <Text style={styles.aiInfoHeader}>-PSİKOLOG-</Text>
-            </View>
-            <View style={styles.aiInfoTextBox}>
-              <Text style={styles.aiInfoText}>Psikolog işleri ile aklına takılan her noktada Rona yanında</Text>
-            </View>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.box1}
-                          onPress={() =>{
-                            setModalVisible(true)
-                            setSelectedAI('ECRİN')
-                          }}
-        >
-          <View style={styles.photo}>
-            <Image resizeMethod={'resize'} source={require('../assets/images/diyetisyen.png')} style={styles.photoImage}></Image>
-          </View>
-          <View style={styles.stick}></View>
-          <View style={styles.aiTextBox}>
-            <View style={styles.aiInfoHeaderBox}>
-              <Text style={styles.aiInfoHeader}>ECRİN</Text>
-              <Text style={styles.aiInfoHeader}>-DİYETİSYEN-</Text>
-            </View>
-            <View style={styles.aiInfoTextBox}>
-              <Text style={styles.aiInfoText}>Diyet işleri ile aklına takılan her noktada Ecrin yanında</Text>
-            </View>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.box1}
-                          onPress={() => {
-                            setModalVisible(true)
-                            setSelectedAI('NEVZAT')
-                          }}
-        >
-          <View style={styles.photo}>
-            <Image resizeMethod={'auto'} source={require('../assets/images/chef.png')} style={styles.photoImage}></Image>
-          </View>
-          <View style={styles.stick}></View>
-          <View style={styles.aiTextBox}>
-            <View style={styles.aiInfoHeaderBox}>
-              <Text style={styles.aiInfoHeader}>NEVZAT</Text>
-              <Text style={styles.aiInfoHeader}>-AŞÇI-</Text>
-            </View>
-            <View style={styles.aiInfoTextBox}>
-              <Text style={styles.aiInfoText}>Yemek konusunda aklına takılan her noktada Nevzat yanında</Text>
-            </View>
-          </View>
-        </TouchableOpacity>
+        <UserInfo setModalVisible={setModalVisible} setSelectedAI={setSelectedAI} setSelectedAiId={setSelectedAiId}></UserInfo>
       </ScrollView>
-      <View style={styles.bottomBar}>{/*ALT BAR EKLENECEK*/}</View>
 
       <Modal
         animationType="slide"
@@ -187,12 +91,21 @@ const AIsScreen = ({navigation, route}) => {
                   <View style={styles.modalChatBox}>
                     <TouchableOpacity style={styles.newChatBox}
                                       onPress={() => {
-                                        navigation.navigate('TalkScreen', {selectedAI: selectedAI});
+                                        getThread();
+                                        storage.set("selectedAI", selectedAI);
+                                        storage.set("ai_id", selectedAiId);
+                                        navigation.navigate('NewTalkScreen',);
                                         setModalVisible(false);
                                       }}>
                       <Text>Yeni sohbet oluştur</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.lastChatbox}>
+                    <TouchableOpacity style={styles.lastChatbox}
+                                      onPress={() =>{
+                                        storage.set("ai_name", selectedAI);
+                                        storage.set("ai_id", selectedAiId);
+                                        navigation.navigate('ResumeMessageScreen');
+                                        setModalVisible(false);
+                                      }}>
                       <Text>Önceki sohbetleri görüntüle</Text>
                     </TouchableOpacity>
                   </View>
@@ -216,6 +129,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: "rgb(12,15,22)",
   },
   header:{
     width: '100%',
@@ -224,40 +138,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderBottomWidth: 1,
-    borderColor: "rgb(130,136,174)",
+    backgroundColor: "rgb(12,15,22)",
   },
-  notificationButton: {
-    width: 40,
-    height: 40,
-  },
-  notificationIcon: {
+  profileIcon: {
     width: 35,
-    height: 39,
+    height: 35,
   },
   title:{
     fontSize: 22,
     fontWeight: 'bold',
+    color: "#fff",
   },
-  profileButton: {
 
-  },
-  inputBox:{
-    width: '100%',
-    height: 60,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  input:{
-    width: '90%',
-    height: 40,
-    borderWidth: 2,
-    borderColor: "rgb(130,136,174)",
-    borderRadius: 10,
-    paddingLeft: 10,
-  },
   aiBox: {
     width: '100%',
+    backgroundColor: "rgb(12,15,22)",
   },
   box1: {
     marginHorizontal: '5%',

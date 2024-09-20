@@ -1,13 +1,28 @@
-import React, { useState } from 'react';
-import {Text, StyleSheet, View, TextInput, Alert, Button, Image} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {Text, StyleSheet, View, TextInput, Alert, Linking, Image, TouchableOpacity} from 'react-native';
+import { MMKV } from 'react-native-mmkv';
+import LinearGradient from 'react-native-linear-gradient';
+import {error} from 'selenium-webdriver';
 
+
+const storage = new MMKV();
 
 const LoginScreen = ({ navigation, route }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { setIsLogined } = route.params;
 
+  const [secureTextEntryBox, setSecureTextEntryBox] = useState(true);
+  const [imageHideOrView, setImageHideOrView] = useState(require("../assets/images/hidePassword.png"));
 
+  const togglePasswordVisibility = () => {
+    setSecureTextEntryBox(!secureTextEntryBox);
+    setImageHideOrView(
+      secureTextEntryBox
+        ? require('../assets/images/viewPassword.png')
+        : require('../assets/images/hidePassword.png')
+    );
+  };
 
   const validateEmail = async () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -30,34 +45,44 @@ const LoginScreen = ({ navigation, route }) => {
       const data = await response.json();
 
       if (response.ok && data.status) {
+        storage.set('user_email', email);
+        storage.set('user_password', password);
+        storage.set('isLogined', true);
+
         setIsLogined(true);
         const token = data.access_token;
+        storage.set('token', token);
         navigation.reset({
           index: 0,
-          routes: [{ name: 'TabNavigator',  params: { screen: 'AIsScreen', params: {token: token} } }],
-
+          routes: [{ name: 'TabNavigator', params: { screen: 'AIsScreen' } }],
         });
       } else {
-        // Hata durumunda gelen mesajı göster
-        const errorMessage = data.message || 'Kullanıcı bulunamadı'
-        Alert.alert( errorMessage, 'Hatalı e-posta veya şifre girildi.');
+        const errorMessage = data.message || 'Kullanıcı bulunamadı';
+        Alert.alert(errorMessage, 'Hatalı e-posta veya şifre girildi.');
       }
     } catch (error) {
       Alert.alert('Hata', 'Bir hata oluştu. Lütfen tekrar deneyin.');
     }
   };
+  const linkingUrl = () => {
+    const url = "https://aigency.dev/reset-password"
+    Linking.openURL(url).catch(error => {console.log("hata: ",error)});
+  };
 
   return (
     <View style={styles.container}>
-      <View style={styles.containerBox1}>
-        <Text style={styles.headerText}>Login</Text>
-        <View style={styles.shape1}></View>
-        <View style={styles.shape2}></View>
-        <View style={styles.shape3}></View>
-      </View>
+      <LinearGradient colors={['rgb(184,86,196)', 'rgb(121,119,243)']}
+                      start={{ x: 0.25, y: 0.25 }} end={{ x: 1.0, y: 1.0 }}
+                      style={styles.tabBars}>
+        <View style={styles.containerBox1}>
+          <Text style={styles.headerText}>Giriş</Text>
+        </View>
+      </LinearGradient>
+
       <View style={styles.containerBox2}>
         <View style={styles.containerBox}>
           <View style={styles.inputBox}>
+            <Image source={require('../assets/images/mail.png')} style={{width: 30,height: 30,position:"absolute", zIndex: 1,top: 10,left: 10}}/>
             <TextInput
               placeholder={'E-mail'}
               value={email}
@@ -67,31 +92,30 @@ const LoginScreen = ({ navigation, route }) => {
             />
           </View>
           <View style={styles.inputBox}>
+            <Image source={require('../assets/images/password.png')} style={{width: 30,height: 30,position:"absolute", zIndex: 1,top: 10,left: 10}}/>
             <TextInput
-              placeholder={'Password'}
+              placeholder={'Şifre'}
               style={[styles.input, styles.passwordBox]}
               onChangeText={(text) => setPassword(text)}
-              secureTextEntry={true}
+              secureTextEntry={secureTextEntryBox}
               autoCapitalize="none"
             />
+            <TouchableOpacity style={{width: 30,height: 30,position:"absolute", zIndex: 1,top: 10,right: 10}} onPress={togglePasswordVisibility}>
+              <Image source={imageHideOrView} style={{width: 30,height: 30,}} ></Image>
+            </TouchableOpacity>
           </View>
-          <Text style={styles.forgetPasswordButton} onPress={() => navigation.navigate('ForgotPasswordScreen')}>Şifremi unuttum</Text>
-          <Button title={'Giriş'} onPress={validateEmail} />
+          <Text style={styles.forgetPasswordButton} onPress={() => linkingUrl()}>Şifremi unuttum</Text>
+          <TouchableOpacity onPress={validateEmail} >
+            <LinearGradient colors={['rgb(184,86,196)', 'rgb(121,119,243)']}
+                            start={{ x: 0.0, y: 1.0 }} end={{ x: 1.0, y: 1.0 }}
+                            style={{width: "100%", height: 45, borderRadius: 5,display: "flex", justifyContent: "center", alignItems: "center"}}>
+              <Text style={{color: "white",fontWeight: "600", fontSize: 20}}>Giriş</Text>
+            </LinearGradient>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.containerBox}>
-          <View style={styles.stick}></View>
-          <View style={styles.otherLoginBox}>
-            <View style={styles.otherLogin}>
-              <Image source={require('../assets/images/google.png')}
-                     style={styles.image}/>
-            </View>
-            <View style={styles.otherLogin}>
-              <Image source={require('../assets/images/apple-logo.png')}
-                     style={styles.image}/>
-            </View>
-          </View>
-          <Text style={styles.title} onPress={() => navigation.navigate('SignupScreen')}>Don't have account</Text>
+          <Text style={styles.title} onPress={() => navigation.navigate('SignupScreen')}>Yeni Hesap Oluştur</Text>
         </View>
       </View>
     </View>
@@ -103,24 +127,26 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: "rgb(12,15,22)",
+  },
+  tabBars: {
+    width: "100%",
+    maxHeight: "50%",
+    borderBottomRightRadius: 50,
+    borderBottomLeftRadius: 50,
   },
   containerBox: {
     width: '70%',
   },
   containerBox1: {
     width: '100%',
-    height: '55%',
+    height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: "rgb(91, 107, 207)",
-    borderBottomRightRadius: 50,
-    borderBottomLeftRadius: 50,
-    backgroundColor: "rgb(91, 107, 207)",
   },
   containerBox2: {
     width: '100%',
-    height: '45%',
+    height: '50%',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -143,25 +169,29 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     fontSize: 20,
     color: 'black',
+    borderRadius: 5,
+    backgroundColor: 'white',
+    position: 'relative',
   },
   passwordBox: {
     paddingRight: 50,
   },
   forgetPasswordButton: {
     marginTop: 5,
+    marginBottom: 15,
     textAlign: 'right',
+    color: "white",
   },
   stick: {
     marginHorizontal: "20%",
     width: "60%",
-    height: 1,
+    height: 2,
     backgroundColor: "rgb(6,18,83)",
-    margin: 30
+    margin: 30,
   },
   otherLoginBox: {
     justifyContent:  "center",
     flexDirection: 'row',
-
   },
   otherLogin: {
     width: 55,
@@ -172,7 +202,7 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     borderRadius: 30,
     marginHorizontal: 10,
-
+    backgroundColor: 'white',
   },
   image: {
     width: '65%',
@@ -182,12 +212,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     textDecorationLine: 'underline',
     marginVertical: 20,
+    color: "white",
   },
   shape1:{
     width: 500,
     height: 500,
     borderRadius: 250,
-    backgroundColor: "rgb(98,116,221)",
+    backgroundColor: "rgb(184,86,196)",
     position: 'absolute',
     top: -250,
     right: -250,

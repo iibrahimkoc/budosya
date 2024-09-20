@@ -1,10 +1,23 @@
 import React, {useState} from 'react';
-import {StyleSheet, View, Text, TextInput, Button, Image, Alert} from 'react-native';
+import {StyleSheet, View, Text, TextInput, Button, Image, Alert, TouchableOpacity} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 
 const SignupScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const [secureTextEntryBox, setSecureTextEntryBox] = useState(true);
+  const [imageHideOrView, setImageHideOrView] = useState(require("../assets/images/hidePassword.png"));
+
+  const togglePasswordVisibility = () => {
+    setSecureTextEntryBox(!secureTextEntryBox);
+    setImageHideOrView(
+      secureTextEntryBox
+        ? require('../assets/images/viewPassword.png')
+        : require('../assets/images/hidePassword.png')
+    );
+  };
 
   const handleSignup = async () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -43,15 +56,17 @@ const SignupScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.containerBox1}>
-        <Text style={styles.headerText}>Sign Up</Text>
-        <View style={styles.shape1}></View>
-        <View style={styles.shape2}></View>
-        <View style={styles.shape3}></View>
-      </View>
+      <LinearGradient colors={['rgb(184,86,196)', 'rgb(121,119,243)']}
+                      start={{ x: 0.25, y: 0.25 }} end={{ x: 1.0, y: 1.0 }}
+                      style={styles.tabBars}>
+        <View style={styles.containerBox1}>
+          <Text style={styles.headerText}>Kayıt Ol</Text>
+        </View>
+      </LinearGradient>
       <View style={styles.containerBox2}>
         <View style={styles.containerBox}>
           <View style={styles.inputBox}>
+            <Image source={require('../assets/images/profileCircle.png')} style={{width: 30,height: 30,position:"absolute", zIndex: 1,top: 10,left: 10}}/>
             <TextInput
               placeholder="Kullanıcı Adı"
               value={username}
@@ -61,6 +76,7 @@ const SignupScreen = ({ navigation }) => {
             />
           </View>
           <View style={styles.inputBox}>
+            <Image source={require('../assets/images/mail.png')} style={{width: 30,height: 30,position:"absolute", zIndex: 1,top: 10,left: 10}}/>
             <TextInput
               placeholder="E-mail"
               value={email}
@@ -70,16 +86,26 @@ const SignupScreen = ({ navigation }) => {
             />
           </View>
           <View style={styles.inputBox}>
+            <Image source={require('../assets/images/password.png')} style={{width: 30,height: 30,position:"absolute", zIndex: 1,top: 10,left: 10}}/>
             <TextInput
               placeholder="Şifre"
               value={password}
               onChangeText={text => setPassword(text)}
-              secureTextEntry
+              secureTextEntry={secureTextEntryBox}
               style={styles.input}
               autoCapitalize="none"
             />
-          </View>
-          <Button title="Kayıt Ol" onPress={handleSignup} />
+            <TouchableOpacity style={{width: 30,height: 30,position:"absolute", zIndex: 1,top: 10,right: 10}} onPress={togglePasswordVisibility}>
+              <Image source={imageHideOrView} style={{width: 30,height: 30}}/>
+            </TouchableOpacity>
+            </View>
+          <TouchableOpacity onPress={() => handleSignup()} >
+            <LinearGradient colors={['rgb(184,86,196)', 'rgb(121,119,243)']}
+                            start={{ x: 0.0, y: 1.0 }} end={{ x: 1.0, y: 1.0 }}
+                            style={{width: "100%", height: 45, borderRadius: 5,display: "flex", justifyContent: "center", alignItems: "center"}}>
+              <Text style={{color: "white",fontWeight: "600", fontSize: 20}}>Kayıt Ol</Text>
+            </LinearGradient>
+          </TouchableOpacity>
         </View>
         <Text style={styles.title} onPress={() => navigation.navigate('LoginScreen')}>Zaten bir hesabım var.</Text>
       </View>
@@ -92,24 +118,28 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: "rgb(12,15,22)",
+  },
+  tabBars: {
+    width: "100%",
+    maxHeight: "50%",
+    borderBottomRightRadius: 50,
+    borderBottomLeftRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   containerBox: {
     width: '70%',
   },
   containerBox1: {
     width: '100%',
-    height: '55%',
+    height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: "rgb(91, 107, 207)",
-    borderBottomRightRadius: 50,
-    borderBottomLeftRadius: 50,
-    backgroundColor: "rgb(91, 107, 207)",
   },
   containerBox2: {
     width: '100%',
-    height: '45%',
+    height: '50%',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -126,7 +156,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'black',
     borderRadius: 5,
-    marginVertical: 10,
+    marginBottom: 10,
   },
   input: {
     width: '100%',
@@ -135,13 +165,17 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     fontSize: 20,
     color: 'black',
+    borderRadius: 5,
+    backgroundColor: 'white',
+    position: 'relative',
   },
   passwordBox: {
     paddingRight: 50,
   },
   title:{
-    marginVertical: 30,
+    marginVertical: 20,
     textDecorationLine: 'underline',
+    color: "white"
   },
   shape1:{
     width: 500,
